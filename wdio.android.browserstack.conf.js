@@ -22,7 +22,8 @@ exports.config = {
             'browserstack',
             {
                 app: 'bs://c46df44d0430d937e007bb31918a94aaece0c7c6',
-                browserstackLocal: true
+                browserstackLocal: true,
+                "automationName": "flutter"
             },
         ]
     ],
@@ -31,7 +32,6 @@ exports.config = {
             deviceName: 'Samsung Galaxy A52',
             platformVersion: '11.0',
             platformName: 'android',
-            idleTimeout : '150'
         }
     }],
     maxInstances: 1,
