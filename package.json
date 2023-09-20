@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "allure-commandline": "^2.13.8",
+    "dotenv": "^16.3.1",
     "expect-webdriverio": "^3.1.3"
   }
 }

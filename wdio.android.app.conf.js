@@ -24,7 +24,7 @@ exports.config = {
       platformName: 'Android',
       maxInstances: 1,
       'appium:deviceName': 'Redmi Note 11',
-      'appium:platformVersion': '11',
+      'appium:platformVersion': '12',
       'appium:orientation': 'PORTRAIT',
       'appium:automationName': 'UiAutomator2',
       'appium:app': path.join(process.cwd(), './apps/dev-silk2.apk'),
@@ -77,12 +77,12 @@ exports.config = {
 
 
   // Hooks
-  // onPrepare: async function (config, capabilities) {
-  // },
+  onPrepare: async function (config, capabilities) {
+    Integration.createRun();
+  },
 
   before: function () {
-     Integration.createRun();
-
+     // Integration.createRun();
   },
 
   afterScenario: function (world,result,context) {

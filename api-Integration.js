@@ -1,7 +1,11 @@
+require('dotenv').config();
 const fetch = require('node-fetch');
 let currentDate = new Date();
 class Integration {
     async createRun() {
+        console.log('Process.env: ' + process.env.ENV);
+        console.log('Current Date: ' + currentDate);
+        console.log('Process env token: ' + process.env.TOKEN)
         const response = await fetch('https://api.qase.io/v1/run/SHA', {
             method: 'POST',
             body: JSON.stringify({ title: 'automationRun-' + process.env.ENV + '-' + currentDate }),
@@ -40,7 +44,7 @@ class Integration {
             headers: {
                 'content-type': 'application/json',
                 accept: 'application/json',
-                Token: '00614d87aab83cdea86312855bd3919a38c90193ccce350f2f653ed125468271',
+                Token: process.env.TOKEN,
             },
         });
         const myJson = await response.json(); // extract JSON from the http response
@@ -51,7 +55,7 @@ class Integration {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                Token: '00614d87aab83cdea86312855bd3919a38c90193ccce350f2f653ed125468271',
+                Token: process.env.TOKEN,
             },
         });
         const myJson = await response.json();

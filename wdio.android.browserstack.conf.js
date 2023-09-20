@@ -70,21 +70,21 @@ exports.config = {
         // <boolean> Enable this config to treat undefined definitions as warnings.
         ignoreUndefinedDefinitions: false,
     },
-    before: function () {
-        //Integration.createRun();
 
+    before: function () {
+        Integration.createRun();
     },
 
     afterScenario: function (world, result, context) {
-        // const testcaseID = world.pickle.tags.map((tag) => tag.name);
-        // const originalString = testcaseID.toString();
-        // const match = originalString.match(/\d+/);
-        // const extractedNumber = match ? parseInt(match[0], 10) : null;
-        // console.log('extractedNumber ' + extractedNumber);
-        // console.log('Status ' + world.result.status.toLowerCase());
-        // console.log('testcaseID ' + data.id);
+        const testcaseID = world.pickle.tags.map((tag) => tag.name);
+        const originalString = testcaseID.toString();
+        const match = originalString.match(/\d+/);
+        const extractedNumber = match ? parseInt(match[0], 10) : null;
+        console.log('extractedNumber ' + extractedNumber);
+        console.log('Status ' + world.result.status.toLowerCase());
+        console.log('testcaseID ' + data.id);
 
-        // Integration.afterMethodCall(world.result.status.toLowerCase(), extractedNumber);
+        Integration.afterMethodCall(world.result.status.toLowerCase(), extractedNumber);
         browser.reset();
 
     },
@@ -135,7 +135,7 @@ exports.config = {
      */
     beforeFeature: async function (uri, feature) {
         // allureReporter.addStep("Starting Fetaure : " + feature.name);
-        await browser.maximizeWindow();
+        // await browser.maximizeWindow();
     },
     /**
      *
