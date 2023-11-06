@@ -1,4 +1,5 @@
 const Integration = require('./api-Integration');
+const fetch = require('node-fetch');
 var allureReporter = require('@wdio/allure-reporter');
 var cucumberJson = require('wdio-cucumberjs-json-reporter');
 var path = require('path');
@@ -13,6 +14,37 @@ let allure_config = {
     addConsoleLogs: true
 };
 
+let getApKFromBs = function() {
+
+    const username = 'zubairalam_aiMp4f';
+    const password = 'djHXUTeNrbSpndAqYCEe';
+    const url = 'https://api-cloud.browserstack.com/app-automate/recent_apps';
+    let appUrl;
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Basic ${Buffer.from(`${username}:${password}`).toString('base64')}`,
+        },
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data); // Handle the response data here
+            data.every(function (appObj) {
+                if(appObj['app_name'].toString().includes('dev-slik')) {
+                    appUrl = appObj['app_url'];
+                    return false;
+                }
+                return true;
+            })
+            console.log('App URL: ' + appUrl )
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    return appUrl;
+}
+let appUrl = getApKFromBs();
+
 exports.config = {
     specs: ["./features/*.feature"],
     user: 'zubairalam_aiMp4f',
@@ -21,7 +53,8 @@ exports.config = {
         [
             'browserstack',
             {
-                app: 'bs://c46df44d0430d937e007bb31918a94aaece0c7c6',
+                app: appUrl,
+                // app: 'bs://c46df44d0430d937e007bb31918a94aaece0c7c6',
                 browserstackLocal: true,
                 "automationName": "flutter"
             },
