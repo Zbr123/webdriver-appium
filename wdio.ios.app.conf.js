@@ -1,3 +1,4 @@
+require('dotenv').config({ path: `${process.cwd()}/env/.env` });
 const Integration = require('./api-Integration');
 var allureReporter = require('@wdio/allure-reporter');
 var cucumberJson = require('wdio-cucumberjs-json-reporter');
@@ -14,37 +15,41 @@ let allure_config = {
 };
 
 exports.config = {
-    specs: ["./features/android-features/*.feature"],
-    user: 'zubairalam_aiMp4f',
-    key: 'djHXUTeNrbSpndAqYCEe',
-    services: [
-        [
-            'browserstack',
-            {
-                app: 'bs://c46df44d0430d937e007bb31918a94aaece0c7c6',
-                browserstackLocal: true,
-                "automationName": "flutter"
-            },
-        ]
+    specs: ["./features/ios/features/*.feature"],
+    exclude: [
     ],
-    capabilities: [{
-        'bstack:options': {
-            deviceName: 'Samsung Galaxy A52',
-            platformVersion: '11.0',
-            platformName: 'android',
-        }
-    }],
     maxInstances: 1,
+    capabilities: [
+        {
+            platformName: 'iOS',
+            maxInstances: 1,
+            'appium:deviceName': 'Ahsan iPhone 12 Pro',
+            'appium:platformVersion': '16.7',
+            'appium:orientation': 'PORTRAIT',
+            'appium:automationName': 'XCUITest',
+            'appium:app': path.join(process.cwd(), './apps/ipa/StagingSilkRewards4.ipa'),
+            "appium:udid": "00008101-00024CAE28E1401E",
+            'appium:newCommandTimeout': 240,
+            'appium:noReset': true,
+            'appium:ignoreHiddenApiPolicyError':true
+        },
+    ],
     logLevel: "debug",
-    waitforTimeout: 120000,
+    bail: 0,
+    baseUrl: "http://localhost",
+    waitforTimeout: 20000,
     connectionRetryTimeout: 120000,
-    
     connectionRetryCount: 1,
+    services: [],
+    hostname: process.env.HOST_NAME || "localhost",
+    port: 4723,
+    path: "/wd/hub/",
+    protocol: "http",
     framework: "cucumber",
     reporters: [['allure', allure_config]],
     cucumberOpts: {
         // <string[]> (file/dir) require files before executing features
-        require: ["./features/step-definitions/*.step.js"],
+        require: ["./features/ios/steps-definitions/*.step.js"],
         // <boolean> show full backtrace for errors
         backtrace: false,
         // <string[]> ("extension:module") require files with the given EXTENSION after requiring MODULE (repeatable)
@@ -64,28 +69,34 @@ exports.config = {
         // <boolean> fail if there are any undefined or pending steps
         strict: false,
         // <string> (expression) only execute the features or scenarios with tags matching the expression
-        tagExpression: "@Test",
+        tagExpression: "",
         // <number> timeout for step definitions
-        timeout: 1200000,
+        timeout: 60000,
         // <boolean> Enable this config to treat undefined definitions as warnings.
         ignoreUndefinedDefinitions: false,
     },
 
-    before: function () {
+
+    // Hooks
+    onPrepare: async function (config, capabilities) {
         Integration.createRun();
     },
 
-    afterScenario: function (world, result, context) {
+    before: function () {
+        // Integration.createRun();
+    },
+
+    afterScenario: function (world,result,context) {
         const testcaseID = world.pickle.tags.map((tag) => tag.name);
         const originalString = testcaseID.toString();
         const match = originalString.match(/\d+/);
         const extractedNumber = match ? parseInt(match[0], 10) : null;
-        console.log('extractedNumber ' + extractedNumber);
-        console.log('Status ' + world.result.status.toLowerCase());
-        console.log('testcaseID ' + data.id);
+        console.log('extractedNumber '+extractedNumber);
+        console.log('Status '+world.result.status.toLowerCase());
+        console.log('testcaseID '+data.id);
 
-        Integration.afterMethodCall(world.result.status.toLowerCase(), extractedNumber);
-        browser.reset();
+        Integration.afterMethodCall(world.result.status.toLowerCase(),extractedNumber);
+        // browser.reset();
 
     },
 
@@ -147,32 +158,32 @@ exports.config = {
     }
 
 
-// if (setenv === 'browserstack') {
-//   const browserCaps = 'browserStackAndroid';
-//   console.log('Set Env is ' + setenv);
-//   return driver.init(caps[browserCaps])
-//   throw new Error(err);
-// });
-//     // const browserCaps = 'browserStackAndroid';
-//     // console.log('Set Env is ' + setenv);
-//     // driver = await remote(caps[browserCaps]);
-//   } else if (setenv === 'local') {
-//     const localCaps = 'appiumLocalCaps';
-//     console.log('Set Env is ' + setenv);
-//     driver = await remote(caps[localCaps]);
-//     await driver.setTimeout({ 'implicit': 10000 });
-//   } else {
-//     throw new Error('Invalid environment');
-//}
-// },
+    // if (setenv === 'browserstack') {
+    //   const browserCaps = 'browserStackAndroid';
+    //   console.log('Set Env is ' + setenv);
+    //   return driver.init(caps[browserCaps])
+    //   throw new Error(err);
+    // });
+    //     // const browserCaps = 'browserStackAndroid';
+    //     // console.log('Set Env is ' + setenv);
+    //     // driver = await remote(caps[browserCaps]);
+    //   } else if (setenv === 'local') {
+    //     const localCaps = 'appiumLocalCaps';
+    //     console.log('Set Env is ' + setenv);
+    //     driver = await remote(caps[localCaps]);
+    //     await driver.setTimeout({ 'implicit': 10000 });
+    //   } else {
+    //     throw new Error('Invalid environment');
+    //}
+    // },
     /**
      *
      * Runs before a Cucumber Step.
      * @param {Pickle.IPickleStep} step     step data
      * @param {IPickle}            scenario scenario pickleadb d
      */
-// beforeStep: function (step, scenario) {
-// },
+    // beforeStep: function (step, scenario) {
+    // },
     /**
      *
      * Runs after a Cucumber Step.
@@ -183,10 +194,10 @@ exports.config = {
      * @param {string}             result.error    error stack if scenario failed
      * @param {number}             result.duration duration of scenario in milliseconds
      */
-// afterStep: async function (step, scenario, result) {
-//
-//  // cucumberJson.attach(await browser.takeScreenshot(), 'image/png');
-// },
+    // afterStep: async function (step, scenario, result) {
+    //
+    //  // cucumberJson.attach(await browser.takeScreenshot(), 'image/png');
+    // },
     /**
      *
      * Runs before a Cucumber Scenario.
@@ -213,9 +224,9 @@ exports.config = {
      * @param {String}                   uri      path to feature file
      * @param {GherkinDocument.IFeature} feature  Cucumber feature object
      */
-// afterFeature: function (uri, feature) {
-//
-// },
+    // afterFeature: function (uri, feature) {
+    //
+    // },
 
     /**
      * Runs after a WebdriverIO command gets executed
@@ -224,8 +235,8 @@ exports.config = {
      * @param {Number} result 0 - command success, 1 - command error
      * @param {Object} error error object if any
      */
-// afterCommand: function (commandName, args, result, error) {
-// },
+    // afterCommand: function (commandName, args, result, error) {
+    // },
     /**
      * Gets executed after all tests are done. You still have access to all global variables from
      * the test.
@@ -234,18 +245,18 @@ exports.config = {
      * @param {Array.<String>} specs List of spec file paths that ran
      */
 
-//after: async function (world,result, capabilities, specs) {
-//   const testcaseID = world.pickle.tags.map((tag) => tag.name);
-//    const originalString = testcaseID.toString();
-//    const match = originalString.match(/\d+/);
-//    const extractedNumber = match ? parseInt(match[0], 10) : null;
+    //after: async function (world,result, capabilities, specs) {
+    //   const testcaseID = world.pickle.tags.map((tag) => tag.name);
+    //    const originalString = testcaseID.toString();
+    //    const match = originalString.match(/\d+/);
+    //    const extractedNumber = match ? parseInt(match[0], 10) : null;
 
 
-// console.log('extractedNumber '+extractedNumber);
-// console.log('Status '+world.result.status.toLowerCase());
-// console.log('testcaseID '+data.id);
-// Integration.addCaseToTestRun(data.id,originalString,testcaseID);
-// Integration.updateTestRunStatus();
+    // console.log('extractedNumber '+extractedNumber);
+    // console.log('Status '+world.result.status.toLowerCase());
+    // console.log('testcaseID '+data.id);
+    // Integration.addCaseToTestRun(data.id,originalString,testcaseID);
+    // Integration.updateTestRunStatus();
 
     /**
      * Gets executed right after terminating the webdriver session.
@@ -253,8 +264,8 @@ exports.config = {
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {Array.<String>} specs List of spec file paths that ran
      */
-// afterSession: function (config, capabilities, specs) {
-// },
+    // afterSession: function (config, capabilities, specs) {
+    // },
     /**
      * Gets executed after all workers got shut down and the process is about to exit. An error
      * thrown in the onComplete hook will result in the test run failing.
@@ -263,15 +274,14 @@ exports.config = {
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {<Object>} results object containing test results
      */
-// onComplete: function(exitCode, config, capabilities, results) {
-//   Integration.updateTestRunStatus();
-// },
+    // onComplete: function(exitCode, config, capabilities, results) {
+    //   Integration.updateTestRunStatus();
+    // },
     /**
      * Gets executed when a refresh happens.
      * @param {String} oldSessionId session ID of the old session
      * @param {String} newSessionId session ID of the new session
      */
-//onReload: function(oldSessionId, newSessionId) {
-//}
+    //onReload: function(oldSessionId, newSessionId) {
+    //}
 }
-

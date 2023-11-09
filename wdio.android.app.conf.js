@@ -15,7 +15,7 @@ let allure_config = {
 };
 
 exports.config = {
-  specs: ["./features/*.feature"],
+  specs: ["./features/android-features/*.feature"],
   exclude: [
   ],
   maxInstances: 1,

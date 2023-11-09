@@ -2,16 +2,16 @@ const { Given, When, Then } = require('@cucumber/cucumber');
 const WelcomeScreen = require('../pageobjects/welcome-screen');
 const expectChai = require('chai');
 
-Given(/^I opened the App$/, async () => {
-
-  console.log("Loyalty app is opened.");
-  // browser.reset();
-});
-
-
-When(/^I click on Get Started Button$/, async () => {
-  await WelcomeScreen.clickOnGetStartedBtn();
-});
+// Given(/^I opened the App$/, async () => {
+//
+//   console.log("Loyalty app is opened.");
+//   // browser.reset();
+// });
+//
+//
+// When(/^I click on Get Started Button$/, async () => {
+//   await WelcomeScreen.clickOnGetStartedBtn();
+// });
 
 
 When(/^I select the language$/, async () => {
