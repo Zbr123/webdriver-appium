@@ -15,7 +15,7 @@ let allure_config = {
 };
 
 exports.config = {
-  specs: ["./features/android-features/*.feature"],
+  specs: ["./features/android/features/*.feature"],
   exclude: [
   ],
   maxInstances: 1,
@@ -23,8 +23,8 @@ exports.config = {
     {
       platformName: 'Android',
       maxInstances: 1,
-      'appium:deviceName': 'Redmi Note 11',
-      'appium:platformVersion': '12',
+      'appium:deviceName': 'Galaxy A14',
+      'appium:platformVersion': '13',
       'appium:orientation': 'PORTRAIT',
       'appium:automationName': 'UiAutomator2',
       'appium:app': path.join(process.cwd(), './apps/dev-silk2.apk'),
@@ -48,7 +48,7 @@ exports.config = {
   reporters: [['allure', allure_config]],
   cucumberOpts: {
     // <string[]> (file/dir) require files before executing features
-    require: ["./features/step-definitions/*.step.js"],
+    require: ["./features/android/step-definitions/*.step.js"],
     // <boolean> show full backtrace for errors
     backtrace: false,
     // <string[]> ("extension:module") require files with the given EXTENSION after requiring MODULE (repeatable)

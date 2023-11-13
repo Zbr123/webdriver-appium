@@ -5,15 +5,6 @@ var cucumberJson = require('wdio-cucumberjs-json-reporter');
 var path = require('path');
 const {remote} = require("webdriverio");
 const setenv=process.env.ENV
-let data = {id:0}
-let allure_config = {
-    outputDir: 'allure-results',
-    disableWebdriverStepsReporting: true,
-    disableWebdriverScreenshotsReporting: false,
-    useCucumberStepReporter: true,
-    addConsoleLogs: true
-};
-
 let getApKFromBs = function() {
 
     const username = 'zubairalam_aiMp4f';
@@ -28,33 +19,39 @@ let getApKFromBs = function() {
     })
         .then(response => response.json())
         .then(data => {
-            console.log(data); // Handle the response data here
             data.every(function (appObj) {
-                if(appObj['app_name'].toString().includes('dev-slik')) {
+                if(appObj['app_name'].toString().includes('dev-silk')) {
                     appUrl = appObj['app_url'];
                     return false;
                 }
                 return true;
             })
-            console.log('App URL: ' + appUrl )
         })
         .catch(error => {
             console.error('Error:', error);
         });
     return appUrl;
 }
-let appUrl = getApKFromBs();
+let data = {id:0}
+let allure_config = {
+    outputDir: 'allure-results',
+    disableWebdriverStepsReporting: true,
+    disableWebdriverScreenshotsReporting: false,
+    useCucumberStepReporter: true,
+    addConsoleLogs: true
+};
+process.env.BROWSERSTACK_APP1 = getApKFromBs();
+
 
 exports.config = {
-    specs: ["./features/android-features/*.feature"],
+    specs: ["./features/android/features/*.feature"],
     user: 'zubairalam_aiMp4f',
     key: 'djHXUTeNrbSpndAqYCEe',
     services: [
         [
             'browserstack',
             {
-                app: appUrl,
-                // app: 'bs://c46df44d0430d937e007bb31918a94aaece0c7c6',
+                app: process.env.bsApp,
                 browserstackLocal: true,
                 "automationName": "flutter"
             },
@@ -77,7 +74,7 @@ exports.config = {
     reporters: [['allure', allure_config]],
     cucumberOpts: {
         // <string[]> (file/dir) require files before executing features
-        require: ["./features/step-definitions/*.step.js"],
+        require: ["./features/android/step-definitions/*.step.js"],
         // <boolean> show full backtrace for errors
         backtrace: false,
         // <string[]> ("extension:module") require files with the given EXTENSION after requiring MODULE (repeatable)
@@ -104,6 +101,38 @@ exports.config = {
         ignoreUndefinedDefinitions: false,
     },
 
+    onPrepare: async function(config, capabilities) {
+
+
+        const username = 'zubairalam_aiMp4f';
+        const password = 'djHXUTeNrbSpndAqYCEe';
+        const url = 'https://api-cloud.browserstack.com/app-automate/recent_apps';
+        let appUrl;
+        await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Basic ${Buffer.from(`${username}:${password}`).toString('base64')}`,
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Data: ' + data);
+                data.every(function (appObj) {
+                    if(appObj['app_name'].toString().includes('dev-silk')) {
+                        appUrl = appObj['app_url'];
+                        console.log("APP URL bs : " + appUrl)
+                        process.env.BROWSERSTACK_APP1 = appUrl;
+                        return false;
+                    }
+                    return true;
+                })
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+
+    },
+
     before: function () {
         Integration.createRun();
     },
@@ -118,7 +147,7 @@ exports.config = {
         console.log('testcaseID ' + data.id);
 
         Integration.afterMethodCall(world.result.status.toLowerCase(), extractedNumber);
-        browser.reset();
+        // browser.reset();
 
     },
 
