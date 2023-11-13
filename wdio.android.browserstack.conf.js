@@ -22,6 +22,7 @@ let getApKFromBs = function() {
             data.every(function (appObj) {
                 if(appObj['app_name'].toString().includes('dev-silk')) {
                     appUrl = appObj['app_url'];
+                    console.log("APP URL: " + appUrl);
                     return false;
                 }
                 return true;
@@ -40,8 +41,6 @@ let allure_config = {
     useCucumberStepReporter: true,
     addConsoleLogs: true
 };
-process.env.BROWSERSTACK_APP1 = getApKFromBs();
-
 
 exports.config = {
     specs: ["./features/android/features/*.feature"],
@@ -51,7 +50,7 @@ exports.config = {
         [
             'browserstack',
             {
-                app: process.env.bsApp,
+                app: process.env.BS_APP,
                 browserstackLocal: true,
                 "automationName": "flutter"
             },
@@ -101,37 +100,6 @@ exports.config = {
         ignoreUndefinedDefinitions: false,
     },
 
-    onPrepare: async function(config, capabilities) {
-
-
-        const username = 'zubairalam_aiMp4f';
-        const password = 'djHXUTeNrbSpndAqYCEe';
-        const url = 'https://api-cloud.browserstack.com/app-automate/recent_apps';
-        let appUrl;
-        await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Basic ${Buffer.from(`${username}:${password}`).toString('base64')}`,
-            },
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Data: ' + data);
-                data.every(function (appObj) {
-                    if(appObj['app_name'].toString().includes('dev-silk')) {
-                        appUrl = appObj['app_url'];
-                        console.log("APP URL bs : " + appUrl)
-                        process.env.BROWSERSTACK_APP1 = appUrl;
-                        return false;
-                    }
-                    return true;
-                })
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-
-    },
 
     before: function () {
         Integration.createRun();

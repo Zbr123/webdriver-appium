@@ -1,0 +1,24 @@
+name: browserstack-android
+on:
+  push:
+    branches:
+      - android-bs
+
+    pull_request:
+      branches:
+        - android-bs
+jobs:
+  build:
+    env:
+      BS_APP: 'bs://3e2795dcecd6cba04ba2c7375de747111243b65e'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Install Dependencies
+        run: npm install
+      - name: Execute test
+        run: npm run bs.android.app
