@@ -68,7 +68,7 @@ exports.config = {
     waitforTimeout: 120000,
     connectionRetryTimeout: 120000,
     
-    connectionRetryCount: 1,
+    connectionRetryCount: 0,
     framework: "cucumber",
     reporters: [['allure', allure_config]],
     cucumberOpts: {
@@ -115,7 +115,7 @@ exports.config = {
         console.log('testcaseID ' + data.id);
 
         Integration.afterMethodCall(world.result.status.toLowerCase(), extractedNumber);
-        // browser.reset();
+        browser.reset();
 
     },
 
